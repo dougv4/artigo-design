@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise Interativa da Pesquisa em Design</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Updated Palette based on Figma: Clean Whites and Grays (Background: #F9FAFB, Text: #4F4A45, Accent: #A57706, Secondary Accent: #6A6A6A) -->
+    <!-- Application Structure Plan: A thematic, single-page dashboard structure was chosen over a linear report format to enhance user exploration and understanding. The flow is designed to be intuitive: 1. A compelling 'Início' section with the core research question and main finding. 2. An interactive 'Conceitos-Chave' section to build foundational knowledge. 3. A visual 'Metodologia' section explaining the research process. 4. An interactive 'Resultados' dashboard with charts and key stats. 5. A clear 'Conclusão' with takeaways. A sticky navigation bar enables non-linear access to all sections. This structure allows users to digest complex information in manageable, themed chunks, making the report's insights more accessible and impactful. -->
+    <!-- Visualization & Content Choices: 
+        - [Report Info: Key Definitions] -> [Goal: Inform] -> [Viz: Interactive Accordion Cards] -> [Interaction: Click to expand/collapse] -> [Justification: Prevents a wall of text, allows users to focus on one concept at a time.] -> [Library/Method: Vanilla JS + Tailwind]
+        - [Report Info: Article Filtering Process] -> [Goal: Organize/Inform] -> [Viz: HTML/CSS Visual Funnel] -> [Interaction: Static visual] -> [Justification: Creates a more engaging and immediate understanding of the selection process than a simple text description or flowchart.] -> [Library/Method: HTML + Tailwind]
+        - [Report Info: Yearly publication data] -> [Goal: Compare/Change] -> [Viz: Interactive Bar Chart] -> [Interaction: Hover for tooltips with specific numbers] -> [Justification: Allows for easy comparison between total articles and aligned articles, and visualizes the trend over time more effectively than a static table.] -> [Library/Method: Chart.js]
+        - [Report Info: Key Percentages] -> [Goal: Inform] -> [Viz: Large Stat Display] -> [Interaction: Static] -> [Justification: Highlights the most critical findings of the report for immediate impact.] -> [Library/Method: HTML + Tailwind]
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to bottom, #FFFFFF, #F9FAFB);
+            color: #4F4A45;
+        }
+        .accent-color { color: #A57706; }
+        .accent-bg { background-color: #A57706; }
+        .secondary-text { color: #6A6A6A; }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #A57706;
+        }
+        .concept-card .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+        }
+        .concept-card.open .content {
+            max-height: 500px;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50" style="box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);">
+        <nav class="mx-auto px-48 py-4 flex justify-between items-center" style="max-width: 1920px;">
+            <div class="text-xl font-bold accent-color">
+                Pesquisa em Design
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#inicio" class="nav-link font-medium secondary-text">Início</a>
+                <a href="#conceitos" class="nav-link font-medium secondary-text">Conceitos-Chave</a>
+                <a href="#metodologia" class="nav-link font-medium secondary-text">Metodologia</a>
+                <a href="#resultados" class="nav-link font-medium secondary-text">Resultados</a>
+                <a href="#conclusao" class="nav-link font-medium secondary-text">Conclusão</a>
+            </div>
+            <div class="md:hidden">
+                <select id="mobile-nav" class="bg-white border border-gray-300 rounded-md p-2">
+                    <option value="#inicio">Início</option>
+                    <option value="#conceitos">Conceitos-Chave</option>
+                    <option value="#metodologia">Metodologia</option>
+                    <option value="#resultados">Resultados</option>
+                    <option value="#conclusao">Conclusão</option>
+                </select>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="inicio" class="py-32">
+            <div class="mx-auto px-6 text-center" style="max-width: 1536px;">
+                <h1 class="text-6xl font-bold accent-color leading-tight text-center" style="width: 616px; margin: 0 auto;">Pesquisa em Design</h1>
+                <h2 class="text-4xl font-semibold mt-2 text-gray-700 text-center" style="width: 1116px; margin: 0 auto;">"Correspondências entre os conceitos de design como disciplina e pesquisa para design: um estudo das interpretações sobre o campo na produção científica da revista Estudos em Design"</h2>
+                <div class="mt-6 text-center" style="padding: 16px 0px 40px;">
+                    <p class="text-xl secondary-text">
+                        Esta análise investiga como a produção científica da revista "Estudos em Design" se alinha com o conceito de Design como uma disciplina autônoma. Exploramos se os artigos refletem uma prática teórica consolidada ou se pendem para uma abordagem focada na prática profissional.
+                    </p>
+                </div>
+                
+                <div class="mt-8 text-center">
+                    <a href="artigo.pdf" download class="inline-flex items-center px-6 py-3 text-lg font-semibold text-white accent-bg rounded-lg hover:opacity-90 transition-opacity">
+                        📄 Baixar Artigo Completo (PDF)
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="tema" class="bg-white" style="padding: 0px 192px 43px;">
+            <div class="mx-auto" style="max-width: 1536px; padding: 0px 24px; gap: 48px; display: flex; flex-direction: column; align-items: center;">
+                <div class="text-center" style="width: 848px;">
+                    <h2 class="text-4xl font-bold" style="color: #1F2937;">O Tema e o Cenário da Pesquisa</h2>
+                </div>
+                
+                <div class="bg-white border rounded-lg" style="width: 848px; padding: 33px; gap: 16px; display: flex; flex-direction: column; border-color: #E5E7EB; box-shadow: 0px 2px 4px -2px rgba(0, 0, 0, 0.1), 0px 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                    <h3 class="text-2xl font-bold accent-color">A pergunta de partida</h3>
+                    <p class="text-lg" style="color: #6A6A6A; line-height: 1.625em;">
+                        A pesquisa se iniciou com uma pergunta fundamental, guiada pelo método proposto no "Manual de investigação em ciências sociais" (QUIVY, 2008), sendo ela: Quais as correspondências entre os conceitos de 'Design como Disciplina' e 'Pesquisa para Design' na produção científica da revista Estudos em Design?. Nosso grande objetivo era entender se os artigos dessa revista apoiam a ideia de Design como uma disciplina independente, como proposto por Nigel Cross, ou se eles se inclinam mais para uma visão focada na prática.
+                    </p>
+                </div>
+                
+                <div class="bg-white border rounded-lg" style="width: 848px; padding: 33px; gap: 16px; display: flex; flex-direction: column; border-color: #E5E7EB; box-shadow: 0px 2px 4px -2px rgba(0, 0, 0, 0.1), 0px 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                    <h3 class="text-2xl font-bold accent-color">Conhecendo a Revista "Estudos em Design"</h3>
+                    <p class="text-lg" style="color: #6A6A6A; line-height: 1.625em;">
+                        A <span class="font-semibold accent-color">Estudos em Design</span>, lançada em <span class="font-semibold accent-color">1993</span>, é um marco importantíssimo para a pesquisa em Design no Brasil. Ela é o periódico oficial da Associação Estudos em Design e foi a primeira publicação acadêmica e científica sobre o tema no país.
+                    </p>
+                    <p class="text-lg" style="color: #6A6A6A; line-height: 1.625em;">
+                        Com uma abordagem multidisciplinar, a revista busca compartilhar conteúdos científicos e educacionais de forma aberta. Ela aceita diversos tipos de textos, como cartas ao leitor, editoriais, artigos e até trabalhos de iniciação científica. A "Estudos em Design" publica duas edições anuais, nos meses de maio e setembro, e ainda uma edição especial em dezembro, que conta com a participação de convidados de destaque na área.
+                    </p>
+                </div>
+                
+                <div class="bg-white border rounded-lg" style="width: 848px; padding: 33px; gap: 16px; display: flex; flex-direction: column; border-color: #E5E7EB; box-shadow: 0px 2px 4px -2px rgba(0, 0, 0, 0.1), 0px 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                    <h3 class="text-2xl font-bold accent-color">A amostra</h3>
+                    <p class="text-lg" style="color: #6A6A6A; line-height: 1.625em;">
+                        Com o objetivo de possuir uma amostra considerável de produção científica publicada e trabalhar com um cenário próximo da atualidade, foi estabelecido um recorte temporal de cinco anos anteriores ao início do desenvolvimento desta pesquisa. Logo, todo o conteúdo analisado contempla editoriais, artigos e iniciações científicas publicados na revista entre as edições v. 28, n. 1 (2020) e v. 33, n. 1 (2025).
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="objetivo" class="bg-white" style="padding: 64px 192px 43px;">
+            <div class="mx-auto" style="max-width: 1536px; padding: 0px 24px; gap: 48px; display: flex; flex-direction: column; align-items: center;">
+                <div style="width: 896px; gap: 32px; display: flex; flex-direction: column;">
+                    <h2 class="text-4xl font-bold text-center" style="color: #1F2937;">Objetivo Principal</h2>
+                    <div class="bg-white border rounded-lg" style="padding: 33px; gap: 16px; display: flex; flex-direction: column; border-color: #E5E7EB; box-shadow: 0px 2px 4px -2px rgba(0, 0, 0, 0.1), 0px 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                        <h3 class="text-2xl font-bold accent-color">Entender o estado do Design como Disciplina na revista Estudo em Design</h3>
+                        <p class="text-lg" style="color: #6A6A6A; line-height: 1.625em;">Nosso grande objetivo era avaliar produção científica da revista "Estudos em Design", visando analisar suas contribuições para o fortalecimento do Design como uma disciplina, alinhada ao conceito de "Design como Disciplina" presente na literatura. O estudo também propõe refletir sobre a produção científica nacional com os debates internacionais do campo do Design, especialmente aqueles publicados na revista Design Studies, que concentra discussões fundamentais e artigos de referência, como os de Nigel Cross.</p>
+                    </div>
+                </div>
+                <div style="width: 1024px;">
+                    <h2 class="text-4xl font-bold text-center mb-8" style="color: #1F2937;">Objetivos Específicos</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+                        <div class="border rounded-lg" style="padding: 33px; gap: 12px; display: flex; flex-direction: column; justify-content: center; background-color: #F9F5F1; border-color: #E5E7EB; box-shadow: 0px 2px 4px -2px rgba(0, 0, 0, 0.1), 0px 4px 6px -1px rgba(0, 0, 0, 0.1); height: 311px;">
+                            <h3 class="text-2xl font-bold accent-color">A. Definir conceitos fundamentais</h3>
+                            <p class="text-lg" style="color: #6A6A6A; line-height: 1.625em;">Estabelecer as definições de "Design como Disciplina" e "Pesquisa para Design" com base em critérios teóricos e metodológicos claros, visando que todos possam compreender os termos de maneira uniforme.</p>
+                        </div>
+                        <div class="border rounded-lg" style="padding: 33px; gap: 12px; display: flex; flex-direction: column; justify-content: center; background-color: #F3F0EC; border-color: #E5E7EB; box-shadow: 0px 2px 4px -2px rgba(0, 0, 0, 0.1), 0px 4px 6px -1px rgba(0, 0, 0, 0.1); height: 311px;">
+                            <h3 class="text-2xl font-bold accent-color">B. Excluir abordagens irrelevantes</h3>
+                            <p class="text-lg" style="color: #6A6A6A; line-height: 1.625em;">Descartar visões que limitem o Design a habilidades técnicas, aplicações de outras áreas ou foco exclusivo em produtos sem fundamentação teórica. mantendo o foco e rigor da pesquisa, garantindo que o estudo não seja diluído por artigos que não contribuem para uma visão mais científica da área.</p>
+                        </div>
+                        <div class="border rounded-lg" style="padding: 33px; gap: 12px; display: flex; flex-direction: column; justify-content: center; background-color: #F9F5F1; border-color: #E5E7EB; box-shadow: 0px 2px 4px -2px rgba(0, 0, 0, 0.1), 0px 4px 6px -1px rgba(0, 0, 0, 0.1); height: 311px;">
+                            <h3 class="text-2xl font-bold accent-color">C. Quantificar e analisar artigos</h3>
+                            <p class="text-lg" style="color: #6A6A6A; line-height: 1.625em;">Identificar e contar artigos que se encaixam nas definições propostas, examinando sua evolução ao longo do tempo. Assim identificando tendências e lacunas no desenvolvimento do campo.</p>
+                        </div>
+                        <div class="border rounded-lg" style="padding: 33px; gap: 12px; display: flex; flex-direction: column; justify-content: center; background-color: #F3F0EC; border-color: #E5E7EB; box-shadow: 0px 2px 4px -2px rgba(0, 0, 0, 0.1), 0px 4px 6px -1px rgba(0, 0, 0, 0.1); height: 311px;">
+                            <h3 class="text-2xl font-bold accent-color">D. Refletir sobre implicações</h3>
+                            <p class="text-lg" style="color: #6A6A6A; line-height: 1.625em;">Avaliar como as abordagens adotadas contribuem para a construção de conhecimento no campo do Design. Com isto, se deseja aumentar a conscientização sobre a maturidade da área no âmbito da produção científica.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="conceitos" class="bg-white" style="padding: 64px 192px 43px;">
+            <div class="mx-auto" style="max-width: 1536px; padding: 0px 24px; gap: 48px; display: flex; flex-direction: column; align-items: center;">
+                <div style="gap: 16px; display: flex; flex-direction: column; align-items: center;">
+                    <h2 class="text-4xl font-bold text-center" style="color: #1F2937;">Principais Conceitos</h2>
+                    <p class="text-lg text-center" style="color: #6A6A6A; line-height: 1.556em;">Para entender a análise, é fundamental conhecer as definições que guiaram o estudo.</p>
+                </div>
+                
+                <div style="width: 1024px; height: 544px; position: relative;">
+                    <div class="border rounded-lg" style="position: absolute; left: 80px; top: 0; padding: 25px; gap: 21px; display: flex; flex-direction: column; justify-content: center; background-color: #F9FAFB; border-color: #E5E7EB; width: 412px; height: 259px;">
+                        <h3 class="text-xl font-bold accent-color">Design como Disciplina</h3>
+                        <p class="text-base" style="color: #6A6A6A; line-height: 1.5em;">A concepção do Design como uma "terceira área da educação", distinta das ciências e das humanidades. Possui um corpo de conhecimento e modos de conhecer próprios, focados na "concepção e realização de coisas novas" no "mundo artificial" e na solução de "problemas mal-definidos" (wicked problems).</p>
+                    </div>
+                    
+                    <div class="border rounded-lg" style="position: absolute; left: 532px; top: 0; padding: 25px; gap: 21px; display: flex; flex-direction: column; justify-content: center; background-color: #F9FAFB; border-color: #E5E7EB; width: 412px; height: 259px;">
+                        <h3 class="text-xl font-bold accent-color">Pesquisa para Design</h3>
+                        <p class="text-base" style="color: #6A6A6A; line-height: 1.5em;">Refere-se à coleta de materiais de referência e informações que servem como insumo direto para a prática de design. O conhecimento é incorporado no artefato final, e o objetivo principal é a criação do produto, com a pesquisa funcionando como uma atividade de suporte à produção.</p>
+                    </div>
+                    
+                    <div class="border rounded-lg" style="position: absolute; left: 80px; top: 285px; padding: 25px; gap: 21px; display: flex; flex-direction: column; justify-content: center; background-color: #F9FAFB; border-color: #E5E7EB; width: 412px; height: 259px;">
+                        <h3 class="text-xl font-bold accent-color">Pesquisa em Design</h3>
+                        <p class="text-base" style="color: #6A6A6A; line-height: 1.5em;">Envolve o estudo e a investigação de aspectos relacionados à arte e ao design como objetos de análise. Seu propósito é gerar conhecimento explícito e comunicável sobre domínios históricos, estéticos, teóricos, sociais ou técnicos, utilizando metodologias acadêmicas tradicionais.</p>
+                    </div>
+                    
+                    <div class="border rounded-lg" style="position: absolute; left: 532px; top: 285px; padding: 25px; gap: 21px; display: flex; flex-direction: column; justify-content: center; background-color: #F9FAFB; border-color: #E5E7EB; width: 412px; height: 259px;">
+                        <h3 class="text-xl font-bold accent-color">Wicked Problems</h3>
+                        <p class="text-base" style="color: #6A6A6A; line-height: 1.5em;">Desafios inerentemente complexos e mal-definidos, que não possuem soluções únicas e predefinidas. A compreensão do problema evolui à medida que soluções são exploradas, exigindo uma abordagem focada na solução, característica central do design como disciplina.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="metodologia" class="py-16 bg-white" style="padding: 64px 192px 43px;">
+            <div class="mx-auto px-6" style="max-width: 1536px;">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Metodos</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg secondary-text">
+                        A pesquisa seguiu um processo rigoroso de filtragem e análise para identificar os artigos relevantes. O fluxograma abaixo ilustra como a amostra foi selecionada.
+                    </p>
+                </div>
+                
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex flex-col items-center space-y-4 text-center">
+                        <div class="bg-white p-6 rounded-lg shadow-md border w-full md:w-3/4">
+                            <p class="text-sm uppercase tracking-wider secondary-text">Etapa 1: Coleta Inicial</p>
+                            <p class="text-3xl font-bold accent-color">173</p>
+                            <p class="text-gray-600">Total de artigos publicados (2020-2025)</p>
+                        </div>
+                        <div class="text-3xl font-light text-gray-400">↓</div>
+                        <div class="bg-white p-6 rounded-lg shadow-md border w-full md:w-3/4">
+                             <p class="text-sm uppercase tracking-wider secondary-text">Etapa 2: Filtro Temático</p>
+                            <p class="text-3xl font-bold accent-color">62</p>
+                            <p class="text-gray-600">Artigos classificados como "Pesquisa em Design"</p>
+                        </div>
+                        <div class="text-3xl font-light text-gray-400">↓</div>
+                         <div class="bg-white p-6 rounded-lg shadow-md border w-full md:w-3/4">
+                             <p class="text-sm uppercase tracking-wider secondary-text">Etapa 3: Análise de Critérios</p>
+                            <p class="text-3xl font-bold accent-color">30</p>
+                            <p class="text-gray-600">Artigos que corroboram com o conceito de "Design como Disciplina"</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-16">
+                        <h3 class="text-2xl font-bold text-center text-gray-800 mb-6">Critérios de Análise</h3>
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div class="bg-red-50 p-6 rounded-lg border border-red-200">
+                                <h4 class="text-xl font-semibold text-red-800 mb-3">Critérios de Exclusão</h4>
+                                <ul class="list-disc list-inside space-y-2 secondary-text text-red-700">
+                                    <li>Redução do design a uma habilidade técnica.</li>
+                                    <li>Posicionamento do design como subcampo de outras áreas.</li>
+                                    <li>Foco exclusivo no produto final sem explorar o processo.</li>
+                                </ul>
+                            </div>
+                            <div class="bg-green-50 p-6 rounded-lg border border-green-200">
+                                <h4 class="text-xl font-semibold text-green-800 mb-3">Critérios de Inclusão</h4>
+                                <ul class="list-disc list-inside space-y-2 secondary-text text-green-700">
+                                    <li>Defesa do design como campo autônomo.</li>
+                                    <li>Ênfase em métodos e teorias próprias do design.</li>
+                                    <li>Foco na solução de problemas complexos (wicked problems).</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="resultados" class="py-16" style="padding: 0px 24px;">
+            <div class="mx-auto px-6" style="max-width: 1536px;">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Resultados da Análise</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg secondary-text">
+                        Os dados revelam a proporção de artigos que se alinham com uma visão disciplinar do Design. O gráfico interativo mostra a distribuição anual.
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 items-center max-w-6xl mx-auto">
+                    <div class="space-y-6">
+                         <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                            <p class="text-sm uppercase tracking-wider secondary-text">Pesquisa em Design</p>
+                            <p class="text-4xl font-bold accent-color mt-1">35,84%</p>
+                            <p class="mt-2 text-gray-600">Do total de 173 artigos, 62 foram classificados como "Pesquisa em Design".</p>
+                        </div>
+                         <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                             <p class="text-sm uppercase tracking-wider secondary-text">Alinhados com "Design como Disciplina"</p>
+                            <p class="text-4xl font-bold accent-color mt-1">17,34%</p>
+                            <p class="mt-2 text-gray-600">Do total, apenas 30 artigos atenderam a todos os critérios da visão disciplinar.</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-4 sm:p-6 rounded-lg border border-gray-200">
+                       <div class="chart-container">
+                            <canvas id="articlesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="conclusao" class="py-16" style="padding: 64px 24px;">
+            <div class="mx-auto" style="max-width: 1536px; display: flex; flex-direction: column; align-items: center; gap: 48px;">
+                <div class="bg-white rounded-xl border" style="width: 672px; padding: 33px; gap: 8px; display: flex; flex-direction: column; border-color: #E5E7EB; box-shadow: 0px 4px 6px -4px rgba(0, 0, 0, 0.1), 0px 10px 15px -3px rgba(0, 0, 0, 0.1);">
+                    <div class="text-center">
+                        <p class="text-lg" style="color: #6A6A6A; line-height: 1.556em;">Principal achado da pesquisa:</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-5xl font-bold accent-color">17,34%</p>
+                    </div>
+                    <div class="text-center" style="padding: 4px 0px 0px;">
+                        <p class="text-base" style="color: #4B5563; line-height: 1.5em;">Dos artigos publicados entre 2020 e 2025, apenas esta porcentagem atendeu plenamente aos critérios que definem o "Design como Disciplina", sugerindo um campo ainda em maturação teórica.</p>
+                    </div>
+                </div>
+                
+                <div style="width: 896px; padding: 0px 24px; gap: 48px; display: flex; flex-direction: column;">
+                    <div style="gap: 16px; display: flex; flex-direction: column; align-items: center;">
+                        <h2 class="text-4xl font-bold text-center" style="color: #1F2937;">Conclusões e Implicações</h2>
+                        <div style="width: 672px; text-center;">
+                            <p class="text-lg" style="color: #6A6A6A; line-height: 1.556em;">Nesse contexto, a análise aponta para um campo de Pesquisa em Design, que, embora ativo, ainda demonstra uma forte inclinação para a prática em detrimento da consolidação teórica.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border rounded-lg" style="padding: 33px; gap: 24px; display: flex; flex-direction: column; border-color: #E5E7EB; box-shadow: 0px 4px 6px -4px rgba(0, 0, 0, 0.1), 0px 10px 15px -3px rgba(0, 0, 0, 0.1);">
+                        <div style="gap: 8px; display: flex; flex-direction: column;">
+                            <h3 class="text-xl font-semibold accent-color">Lacuna Teórica</h3>
+                            <p class="text-base" style="color: #6A6A6A; line-height: 1.5em;">A baixa porcentagem de artigos (17,34%) alinhados ao "Design como Disciplina" na revista Estudos em Design sugere que as publicações da revista ainda não abordam de forma direta e frequente a própria área do design e sua produção científica como tema em seus artigos. É importante investigar como os estudos que veem o Design como disciplina se comparam com aqueles que o tratam apenas como uma atividade prática. Entender isso pode ajudar os profissionais da academia a criar pesquisas ainda mais relevantes para o nosso campo.</p>
+                        </div>
+                        
+                        <div style="border-top: 1px solid #E5E7EB; padding: 25px 0px 0px; gap: 8px; display: flex; flex-direction: column;">
+                            <h3 class="text-xl font-semibold accent-color">Teoria vs. Prática</h3>
+                            <p class="text-base" style="color: #6A6A6A; line-height: 1.5em;">Há uma predominância da "Pesquisa para Design" (focada em subsidiar a prática) sobre a "Pesquisa em Design" (focada em investigar o campo). Na academia, é fundamental ver como as abordagens disciplinares e práticas se complementam. Pesquisas mais teóricas trazem contribuições estruturadas, enquanto as focadas na prática geram ideias inovadoras e aplicáveis. Cada trabalho tem seus próprios objetivos, e juntos, eles contribuem para o entendimento completo do Design.</p>
+                        </div>
+                        
+                        <div style="border-top: 1px solid #E5E7EB; padding: 25px 0px 0px; gap: 8px; display: flex; flex-direction: column;">
+                            <h3 class="text-xl font-semibold accent-color">Sugestões para o Futuro</h3>
+                            <div style="gap: 8px; display: flex; flex-direction: column;">
+                                <div style="gap: 15px; display: flex; flex-direction: row;">
+                                    <span style="color: #A57706;">•</span>
+                                    <p class="text-base" style="color: #6A6A6A; line-height: 1.5em;">Realizar análises qualitativas para entender as nuances dos artigos.</p>
+                                </div>
+                                <div style="gap: 15px; display: flex; flex-direction: row;">
+                                    <span style="color: #A57706;">•</span>
+                                    <p class="text-base" style="color: #6A6A6A; line-height: 1.5em;">Incentivar pesquisas que não apenas apliquem o design, mas que o investiguem e o teorizem.</p>
+                                </div>
+                                <div style="gap: 15px; display: flex; flex-direction: row;">
+                                    <span style="color: #A57706;">•</span>
+                                    <p class="text-base" style="color: #6A6A6A; line-height: 1.5em;">Expandir a análise para outros periódicos nacionais para obter um panorama mais completo do cenário brasileiro.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="bg-white mt-16" style="border-top: 1px solid #E5E7EB; padding: 1px 192px 0px; max-width: 1920px; margin: 0 auto;">
+        <div class="mx-auto px-6 py-8 text-center secondary-text" style="gap: 8px; padding: 32px 24px;">
+            <div class="text-center">
+                <p class="text-base secondary-text">Amanda da Silva Amorim, Douglas Viana Gomes, Lara Prado Xavier, Matheus Augusto Pereira Lopes</p>
+            </div>
+            <div class="text-center">
+                <p class="text-sm secondary-text">Pesquisa em Design - 2025/1 - UFMG</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const conceptCards = document.querySelectorAll('.concept-card');
+            conceptCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    card.classList.toggle('open');
+                    const chevron = card.querySelector('.chevron');
+                    if (card.classList.contains('open')) {
+                        chevron.style.transform = 'rotate(90deg)';
+                    } else {
+                        chevron.style.transform = 'rotate(0deg)';
+                    }
+                });
+            });
+
+            const mobileNav = document.getElementById('mobile-nav');
+            mobileNav.addEventListener('change', (e) => {
+                const targetId = e.target.value;
+                document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
+            });
+
+            const chartData = {
+                labels: ['2020', '2021', '2022', '2023', '2024', '2025 (parcial)'],
+                datasets: [
+                    {
+                        label: 'Total de Artigos Publicados',
+                        data: [10, 25, 5, 4, 13, 6],
+                        backgroundColor: '#D1CFCB',
+                        borderColor: '#A9A5A1',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Atendem aos Critérios ("Design como Disciplina")',
+                        data: [5, 11, 3, 2, 5, 4],
+                        backgroundColor: '#A57706',
+                        borderColor: '#8C6404',
+                        borderWidth: 1
+                    }
+                ]
+            };
+
+            const chartConfig = {
+                type: 'bar',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Publicações Anuais: Total vs. Alinhadas à Disciplina',
+                            font: { size: 16, family: 'Inter' },
+                            color: '#4F4A45',
+                            padding: { bottom: 20 }
+                        },
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#4F4A45',
+                                font: { family: 'Inter' }
+                            }
+                        },
+                        tooltip: {
+                           bodyFont: { family: 'Inter' },
+                           titleFont: { family: 'Inter' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Nº de Artigos',
+                                color: '#6A6A6A',
+                                font: { size: 12, family: 'Inter' }
+                            },
+                            ticks: { 
+                                color: '#6A6A6A', 
+                                font: { family: 'Inter' }
+                            },
+                            grid: {
+                                color: '#EDEDED'
+                            }
+                        },
+                        x: {
+                            ticks: { 
+                                color: '#6A6A6A', 
+                                font: { family: 'Inter' }
+                            },
+                             grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            };
+
+            const ctx = document.getElementById('articlesChart').getContext('2d');
+            new Chart(ctx, chartConfig);
+        });
+    </script>
+
+</body>
+</html>
