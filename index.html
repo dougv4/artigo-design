@@ -57,12 +57,33 @@
                 height: 400px;
             }
         }
+        @media (max-width: 768px) {
+            .concept-grid {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 20px !important;
+                position: static !important;
+                height: auto !important;
+            }
+            .concept-card-mobile {
+                position: static !important;
+                width: 100% !important;
+                max-width: none !important;
+                left: auto !important;
+                right: auto !important;
+                top: auto !important;
+            }
+            .objectives-grid {
+                grid-template-columns: 1fr !important;
+                gap: 20px !important;
+            }
+        }
     </style>
 </head>
 <body class="antialiased">
 
     <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50" style="box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);">
-        <nav class="mx-auto px-48 py-4 flex justify-between items-center" style="max-width: 1920px;">
+        <nav class="mx-auto px-6 md:px-48 py-4 flex justify-between items-center" style="max-width: 1920px;">
             <div class="text-xl font-bold accent-color">
                 Pesquisa em Design
             </div>
@@ -88,8 +109,8 @@
     <main>
         <section id="inicio" class="py-32">
             <div class="mx-auto px-6 text-center" style="max-width: 1536px;">
-                <h1 class="text-6xl font-bold accent-color leading-tight text-center" style="width: 616px; margin: 0 auto;">Pesquisa em Design</h1>
-                <h2 class="text-4xl font-semibold mt-2 text-gray-700 text-center" style="width: 1116px; margin: 0 auto;">"Correspondências entre os conceitos de design como disciplina e pesquisa para design: um estudo das interpretações sobre o campo na produção científica da revista Estudos em Design"</h2>
+                <h1 class="text-4xl md:text-6xl font-bold accent-color leading-tight text-center" style="max-width: 616px; margin: 0 auto;">Pesquisa em Design</h1>
+                <h2 class="text-2xl md:text-4xl font-semibold mt-2 text-gray-700 text-center" style="max-width: 1116px; margin: 0 auto;">"Correspondências entre os conceitos de design como disciplina e pesquisa para design: um estudo das interpretações sobre o campo na produção científica da revista Estudos em Design"</h2>
                 <div class="mt-6 text-center" style="padding: 16px 0px 40px;">
                     <p class="text-xl secondary-text">
                         Esta análise investiga como a produção científica da revista "Estudos em Design" se alinha com o conceito de Design como uma disciplina autônoma. Exploramos se os artigos refletem uma prática teórica consolidada ou se pendem para uma abordagem focada na prática profissional.
@@ -104,7 +125,7 @@
             </div>
         </section>
 
-        <section id="tema" class="bg-white" style="padding: 0px 192px 43px;">
+        <section id="tema" class="bg-white" style="padding: 0px 24px 43px; padding-left: clamp(24px, 10vw, 192px); padding-right: clamp(24px, 10vw, 192px);">
             <div class="mx-auto" style="max-width: 1536px; padding: 0px 24px; gap: 48px; display: flex; flex-direction: column; align-items: center;">
                 <div class="text-center" style="width: 848px;">
                     <h2 class="text-4xl font-bold" style="color: #1F2937;">O Tema e o Cenário da Pesquisa</h2>
@@ -136,7 +157,7 @@
             </div>
         </section>
 
-        <section id="objetivo" class="bg-white" style="padding: 64px 192px 43px;">
+        <section id="objetivo" class="bg-white" style="padding: 64px 24px 43px; padding-left: clamp(24px, 10vw, 192px); padding-right: clamp(24px, 10vw, 192px);">
             <div class="mx-auto" style="max-width: 1536px; padding: 0px 24px; gap: 48px; display: flex; flex-direction: column; align-items: center;">
                 <div style="width: 896px; gap: 32px; display: flex; flex-direction: column;">
                     <h2 class="text-4xl font-bold text-center" style="color: #1F2937;">Objetivo Principal</h2>
@@ -147,7 +168,7 @@
                 </div>
                 <div style="width: 1024px;">
                     <h2 class="text-4xl font-bold text-center mb-8" style="color: #1F2937;">Objetivos Específicos</h2>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+                    <div class="objectives-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
                         <div class="border rounded-lg" style="padding: 33px; gap: 12px; display: flex; flex-direction: column; justify-content: center; background-color: #F9F5F1; border-color: #E5E7EB; box-shadow: 0px 2px 4px -2px rgba(0, 0, 0, 0.1), 0px 4px 6px -1px rgba(0, 0, 0, 0.1); height: 311px;">
                             <h3 class="text-2xl font-bold accent-color">A. Definir conceitos fundamentais</h3>
                             <p class="text-lg" style="color: #6A6A6A; line-height: 1.625em;">Estabelecer as definições de "Design como Disciplina" e "Pesquisa para Design" com base em critérios teóricos e metodológicos claros, visando que todos possam compreender os termos de maneira uniforme.</p>
@@ -169,30 +190,30 @@
             </div>
         </section>
 
-        <section id="conceitos" class="bg-white" style="padding: 64px 192px 43px;">
+        <section id="conceitos" class="bg-white" style="padding: 64px 24px 43px; padding-left: clamp(24px, 10vw, 192px); padding-right: clamp(24px, 10vw, 192px);">
             <div class="mx-auto" style="max-width: 1536px; padding: 0px 24px; gap: 48px; display: flex; flex-direction: column; align-items: center;">
                 <div style="gap: 16px; display: flex; flex-direction: column; align-items: center;">
                     <h2 class="text-4xl font-bold text-center" style="color: #1F2937;">Principais Conceitos</h2>
                     <p class="text-lg text-center" style="color: #6A6A6A; line-height: 1.556em;">Para entender a análise, é fundamental conhecer as definições que guiaram o estudo.</p>
                 </div>
                 
-                <div style="width: 1024px; height: 544px; position: relative;">
-                    <div class="border rounded-lg" style="position: absolute; left: 80px; top: 0; padding: 25px; gap: 21px; display: flex; flex-direction: column; justify-content: center; background-color: #F9FAFB; border-color: #E5E7EB; width: 412px; height: 259px;">
+                <div class="concept-grid" style="width: 100%; max-width: 1024px; height: auto; min-height: 544px; position: relative; overflow: hidden;">
+                    <div class="border rounded-lg concept-card-mobile" style="position: absolute; left: clamp(10px, 8%, 80px); top: 0; padding: 25px; gap: 21px; display: flex; flex-direction: column; justify-content: center; background-color: #F9FAFB; border-color: #E5E7EB; width: clamp(280px, 40%, 412px); height: 259px;">
                         <h3 class="text-xl font-bold accent-color">Design como Disciplina</h3>
                         <p class="text-base" style="color: #6A6A6A; line-height: 1.5em;">A concepção do Design como uma "terceira área da educação", distinta das ciências e das humanidades. Possui um corpo de conhecimento e modos de conhecer próprios, focados na "concepção e realização de coisas novas" no "mundo artificial" e na solução de "problemas mal-definidos" (wicked problems).</p>
                     </div>
                     
-                    <div class="border rounded-lg" style="position: absolute; left: 532px; top: 0; padding: 25px; gap: 21px; display: flex; flex-direction: column; justify-content: center; background-color: #F9FAFB; border-color: #E5E7EB; width: 412px; height: 259px;">
+                    <div class="border rounded-lg concept-card-mobile" style="position: absolute; right: clamp(10px, 8%, 80px); top: 0; padding: 25px; gap: 21px; display: flex; flex-direction: column; justify-content: center; background-color: #F9FAFB; border-color: #E5E7EB; width: clamp(280px, 40%, 412px); height: 259px;">
                         <h3 class="text-xl font-bold accent-color">Pesquisa para Design</h3>
                         <p class="text-base" style="color: #6A6A6A; line-height: 1.5em;">Refere-se à coleta de materiais de referência e informações que servem como insumo direto para a prática de design. O conhecimento é incorporado no artefato final, e o objetivo principal é a criação do produto, com a pesquisa funcionando como uma atividade de suporte à produção.</p>
                     </div>
                     
-                    <div class="border rounded-lg" style="position: absolute; left: 80px; top: 285px; padding: 25px; gap: 21px; display: flex; flex-direction: column; justify-content: center; background-color: #F9FAFB; border-color: #E5E7EB; width: 412px; height: 259px;">
+                    <div class="border rounded-lg concept-card-mobile" style="position: absolute; left: clamp(10px, 8%, 80px); top: 285px; padding: 25px; gap: 21px; display: flex; flex-direction: column; justify-content: center; background-color: #F9FAFB; border-color: #E5E7EB; width: clamp(280px, 40%, 412px); height: 259px;">
                         <h3 class="text-xl font-bold accent-color">Pesquisa em Design</h3>
                         <p class="text-base" style="color: #6A6A6A; line-height: 1.5em;">Envolve o estudo e a investigação de aspectos relacionados à arte e ao design como objetos de análise. Seu propósito é gerar conhecimento explícito e comunicável sobre domínios históricos, estéticos, teóricos, sociais ou técnicos, utilizando metodologias acadêmicas tradicionais.</p>
                     </div>
                     
-                    <div class="border rounded-lg" style="position: absolute; left: 532px; top: 285px; padding: 25px; gap: 21px; display: flex; flex-direction: column; justify-content: center; background-color: #F9FAFB; border-color: #E5E7EB; width: 412px; height: 259px;">
+                    <div class="border rounded-lg concept-card-mobile" style="position: absolute; right: clamp(10px, 8%, 80px); top: 285px; padding: 25px; gap: 21px; display: flex; flex-direction: column; justify-content: center; background-color: #F9FAFB; border-color: #E5E7EB; width: clamp(280px, 40%, 412px); height: 259px;">
                         <h3 class="text-xl font-bold accent-color">Wicked Problems</h3>
                         <p class="text-base" style="color: #6A6A6A; line-height: 1.5em;">Desafios inerentemente complexos e mal-definidos, que não possuem soluções únicas e predefinidas. A compreensão do problema evolui à medida que soluções são exploradas, exigindo uma abordagem focada na solução, característica central do design como disciplina.</p>
                     </div>
@@ -200,7 +221,7 @@
             </div>
         </section>
 
-        <section id="metodologia" class="py-16 bg-white" style="padding: 64px 192px 43px;">
+        <section id="metodologia" class="py-16 bg-white" style="padding: 64px 24px 43px; padding-left: clamp(24px, 10vw, 192px); padding-right: clamp(24px, 10vw, 192px);">
             <div class="mx-auto px-6" style="max-width: 1536px;">
                 <div class="text-center mb-12">
                     <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Metodos</h2>
@@ -341,7 +362,7 @@
         </section>
     </main>
     
-    <footer class="bg-white mt-16" style="border-top: 1px solid #E5E7EB; padding: 1px 192px 0px; max-width: 1920px; margin: 0 auto;">
+    <footer class="bg-white mt-16" style="border-top: 1px solid #E5E7EB; padding: 1px 24px 0px; padding-left: clamp(24px, 10vw, 192px); padding-right: clamp(24px, 10vw, 192px); max-width: 1920px; margin: 0 auto;">
         <div class="mx-auto px-6 py-8 text-center secondary-text" style="gap: 8px; padding: 32px 24px;">
             <div class="text-center">
                 <p class="text-base secondary-text">Amanda da Silva Amorim, Douglas Viana Gomes, Lara Prado Xavier, Matheus Augusto Pereira Lopes</p>
